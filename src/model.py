@@ -17,7 +17,7 @@ class LSTMBasedModel(nn.Module):
         self.batch_size = batch_size
         self.hidden_dim = hidden_dim
         self.latent_dim = latent_dim
-        self.embeddings = nn.Embedding(VOCAB_SIZE, TOKEN_SIZE)
+        # self.embeddings = nn.Embedding(VOCAB_SIZE, TOKEN_SIZE)
         self.lstm = nn.LSTM(TOKEN_SIZE, self.hidden_dim)
         self.out_nn = nn.Sequential(
             nn.Linear(2 * self.hidden_dim, self.latent_dim), 
@@ -36,8 +36,8 @@ class LSTMBasedModel(nn.Module):
         #   (INPUT_LEN, BATCH_SIZE, EMBEDDING_SIZE).
         
         # Look up embeddings.
-        x1 = self.embeddings(x[0])
-        x2 = self.embeddings(x[1])
+        x1 = x[0]
+        x2 = x[1]
 
         # Each LSTM output tensor has shape (INPUT_LEN, BATCH_SIZE, HIDDEN_DIM).
         lstm_out1, _ = self.lstm(x1)
