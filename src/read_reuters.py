@@ -1,6 +1,7 @@
 import os
 import pickle as pkl
-from pytorch_pretrained_bert import BertTokenizer
+from pytorch_pretrained_bert import BertTokenizer, BertModel
+import torch
 
 
 STEP = 512
@@ -8,10 +9,45 @@ tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 authors_to_files = pkl.load(open( "a2f.p", "rb" ))
 
 atat = pkl.load(open('a2a_token.p', "rb"))
-print(len(atat['RobinSidel']))
 
-authors_to_articles_string = {}
-authors_to_token = {}
+example = atat['NickLouth'][0]
+
+tokens_tensor = torch.tensor([example])
+segments_tensors = torch.tensor([[0]*512])
+
+model = BertModel.from_pretrained('bert-base-uncased')
+model.eval()
+with torch.no_grad():
+    encoded_layers, _ = model(tokens_tensor, segments_tensors)
+
+print ("Number of layers:", len(encoded_layers))
+layer_i = 0
+
+print ("Number of batches:", len(encoded_layers[layer_i]))
+batch_i = 0
+
+print ("Number of tokens:", len(encoded_layers[layer_i][batch_i]))
+token_i = 0
+
+print ("Number of hidden units:", len(encoded_layers[layer_i][batch_i][token_i]))
+
+token_embeddings = torch.stack(encoded_layers, dim=0)
+token_embeddings = torch.squeeze(token_embeddings, dim=1)
+token_embeddings = token_embeddings.permute(1,0,2)
+
+token_vecs_sum = []
+for token in token_embeddings:
+    sum_vec = torch.sum(token[-4:], dim=0)
+    token_vecs_sum.append(sum_vec)
+
+print ('Shape is: %d x %d' % (len(token_vecs_sum), len(token_vecs_sum[0])))
+
+
+pkl.dump(token_vecs_sum, open( "exampleEmbed.p", "wb" ))
+
+
+# authors_to_articles_string = {}
+# authors_to_token = {}
 
 # for author in authors_to_files:
 #     print(author)
