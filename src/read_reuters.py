@@ -7,24 +7,27 @@ STEP = 512
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
 authors_to_files = pkl.load(open( "a2f.p", "rb" ))
 
+atat = pkl.load(open('a2a_token.p', "rb"))
+print(len(atat['RobinSidel']))
+
 authors_to_articles_string = {}
 authors_to_token = {}
 
-for author in authors_to_files:
-    print(author)
-    for article in authors_to_files[author]:
-        with open(article, "r") as f:
-            f = f.read()
-            authors_to_articles_string[author] = authors_to_articles_string.get(author, []) + [f]
-            tokenized = tokenizer.tokenize(f)
-            for i in range(0, len(tokenized), STEP):
-                inds = tokenizer.convert_tokens_to_ids(tokenized[i:i+STEP])
-                if len(inds) == 512:
-                    authors_to_token[author] = authors_to_token.get(author, []) + list(inds)
+# for author in authors_to_files:
+#     print(author)
+#     for article in authors_to_files[author]:
+#         with open(article, "r") as f:
+#             f = f.read()
+#             authors_to_articles_string[author] = authors_to_articles_string.get(author, []) + [f]
+#             tokenized = tokenizer.tokenize(f)
+#             for i in range(0, len(tokenized), STEP):
+#                 inds = tokenizer.convert_tokens_to_ids(tokenized[i:i+STEP])
+#                 if len(inds) == 512:
+#                     authors_to_token[author] = authors_to_token.get(author, []) + [list(inds)]
 
 
-pkl.dump(authors_to_articles_string, open( "a2a_string.p", "wb" ))
-pkl.dump(authors_to_token, open( "a2a_token.p", "wb" ))
+# pkl.dump(authors_to_articles_string, open( "a2a_string.p", "wb" ))
+# pkl.dump(authors_to_token, open( "a2a_token.p", "wb" ))
 
 
 
