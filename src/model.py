@@ -60,7 +60,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=LEARNING_RATE)
 # Get input datasets.
 def split_x_values(x):
     return [
-        DataLoader(x_train[:, 0, :, :], batch_size=BATCH_SIZE,
+        DataLoader(x_train[:, 0, :, :], batch_size=BATCH_SIZE),
         DataLoader(x_train[:, 1, :, :], batch_size=BATCH_SIZE)
     ]
 x_train, y_train, x_dev, y_dev, x_test, y_test = get_data()
