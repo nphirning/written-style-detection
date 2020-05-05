@@ -13,9 +13,11 @@ atat = pkl.load(open('a2a_token.p', "rb"))
 example = atat['NickLouth'][0]
 
 tokens_tensor = torch.tensor([example])
+tokens_tensor = tokens_tensor.to('cuda')
 segments_tensors = torch.tensor([[0]*512])
-
+segments_tensors = segments_tensors.to('cuda')
 model = BertModel.from_pretrained('bert-base-uncased')
+model.to('cuda')
 model.eval()
 with torch.no_grad():
     encoded_layers, _ = model(tokens_tensor, segments_tensors)
