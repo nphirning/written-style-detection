@@ -9,6 +9,7 @@ class Dataset(torch.utils.data.Dataset):
         'Initialization'
         self.labels = labels
         self.list_IDs = list_IDs
+        self.list = list
 
   def get_text(self, id):
     with open(id, 'r') as f:
@@ -22,12 +23,11 @@ class Dataset(torch.utils.data.Dataset):
         'Generates one sample of data'
         # Select sample
         id = self.list_IDs[index]
+
         ID = self.list[id]
-        example_a = get_text(ID[0])
-        example_b = get_text(ID[1])
         tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
         encoded_dict_a = tokenizer.encode_plus(
-                        self.get_text(example_a),                      # Sentence to encode.
+                        self.get_text(ID[0]),                      # Sentence to encode.
                         add_special_tokens = True, # Add '[CLS]' and '[SEP]'
                         max_length = 128,           # Pad & truncate all sentences.
                         pad_to_max_length = True,
@@ -35,12 +35,12 @@ class Dataset(torch.utils.data.Dataset):
                         return_tensors = 'pt',     # Return pytorch tensors.
                    )
         encoded_dict_b = tokenizer.encode_plus(
-                        self.get_text(example_b),                      # Sentence to encode.
+                        self.get_text(ID[1]),                      # Sentence to encode.
                         add_special_tokens = True, # Add '[CLS]' and '[SEP]'
                         max_length = 128,           # Pad & truncate all sentences.
                         pad_to_max_length = True,
                         return_attention_mask = True,   # Construct attn. masks.
                         return_tensors = 'pt',     # Return pytorch tensors.
                    )
-        y = self.labels[ID]
+        y = self.labels[id]
         return encoded_dict_a, encoded_dict_b, y
